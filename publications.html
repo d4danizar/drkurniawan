@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Publications & Books – Dr. Kurniawan</title>
+
+  <!-- Fonts + Global Theme -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    .pub-grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+    .pub-card .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+    .pub-card h3{margin:.35rem 0 .25rem;font-size:1.1rem}
+    .pub-card small{color:#5c5f73}
+    .filters{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 18px}
+    .chip{padding:.45rem .7rem;border-radius:999px;background:#F2F5FF;border:1px solid #E3E8FF;cursor:pointer}
+    .search{padding:.65rem .8rem;border:1px solid #E6E7F2;border-radius:12px;min-width:240px}
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+   <div class="brand"><a href="index.html">Dr. Kurniawan</a></div>
+
+   <button class="nav-toggle" aria-expanded="false" aria-label="Toggle menu">☰</button>
+
+    <div class="nav-links">
+      <a class="btn btn-ghost" href="#about">About</a>
+      <a class="btn btn-ghost" href="publications.html">Publications</a>
+      <a class="btn btn-ghost" href="blog.html">Blog</a>
+      <a class="btn btn-ghost" href="programs.html">Program</a>
+      <a class="btn btn-ghost" href="gallery.html">Gallery</a>
+      <a class="btn btn-accent" id="waTop" href="#">WhatsApp</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <svg class="skyline" viewBox="0 0 1200 140" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0,120 L80,110 L120,118 L180,95 L220,95 L240,70 L260,95 L320,90 L360,94 L400,70 L430,70 L430,110 L470,105 L520,85 L560,100 L600,80 L640,95 L700,70 L740,70 L760,90 L820,92 L880,80 L930,95 L980,88 L1030,96 L1100,85 L1160,100 L1200,96 L1200,140 L0,140 Z" fill="#000" opacity=".35"/>
+    </svg>
+    <div class="inner">
+      <h1 class="title">Publications & Books</h1>
+      <p class="subtitle" style="color:#E8ECFF;max-width:760px">
+        Kumpulan buku, artikel jurnal, dan sumber belajar yang saya tulis seputar linguistik, public speaking, dan kepercayaan diri.
+      </p>
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <!-- Controls: Search & Filter (opsional) -->
+    <div class="filters">
+      <input id="q" class="search" placeholder="Cari judul / kata kunci… (mis. self-efficacy, parenting)"/>
+      <span class="chip" data-tag="all">Semua</span>
+      <span class="chip" data-tag="book">Book</span>
+      <span class="chip" data-tag="journal">Journal</span>
+      <span class="chip" data-tag="ebook">E-book</span>
+      <span class="chip" data-tag="audio">Audio</span>
+    </div>
+
+    <!-- Books -->
+    <section>
+      <h2 class="section-title">Books</h2>
+      <div class="pub-grid" id="pubs">
+        <article class="card pub-card" data-tags="book confidence speaking">
+          <span class="badge">Book</span>
+          <h3>Present with Presence</h3>
+          <small>2022 • ISBN: 978-xxxx-xxxx</small>
+          <p>Kerangka sederhana membangun kepercayaan diri panggung: struktur cerita, bahasa tubuh, dan latihan 30 hari.</p>
+          <div class="meta">
+            <a class="btn btn-accent" href="#" target="_blank" rel="noopener">Beli / Preview</a>
+          </div>
+        </article>
+
+        <article class="card pub-card" data-tags="book parenting communication">
+          <span class="badge">Book</span>
+          <h3>Parenting Kesantunan</h3>
+          <small>2021 • ISBN: 978-xxxx-xxxx</small>
+          <p>Membangun kepercayaan diri anak melalui bahasa positif di rumah. Panduan praktis untuk orang tua & pendidik.</p>
+          <div class="meta">
+            <a class="btn btn-accent" href="#" target="_blank" rel="noopener">Beli / Preview</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Journals -->
+    <section>
+      <h2 class="section-title">Journal Articles</h2>
+      <div class="pub-grid">
+        <article class="card pub-card" data-tags="journal self-efficacy speaking linguistics">
+          <span class="badge">Journal</span>
+          <h3>Self-Efficacy in Classroom Speaking</h3>
+          <small>2023 • DOI: 10.xxxx/xxxxx</small>
+          <p>Studi hubungan self-efficacy, strategi bahasa, dan performa presentasi mahasiswa.</p>
+          <div class="meta">
+            <a class="btn btn-ghost" href="#" target="_blank" rel="noopener">Abstrak</a>
+            <a class="btn btn-accent" href="#" target="_blank" rel="noopener">PDF</a>
+          </div>
+        </article>
+
+        <article class="card pub-card" data-tags="journal discourse communication">
+          <span class="badge">Journal</span>
+          <h3>Politeness Strategies in Academic Feedback</h3>
+          <small>2020 • DOI: 10.xxxx/xxxxx</small>
+          <p>Analisis strategi kesantunan pada umpan balik dosen–mahasiswa dan dampaknya pada motivasi belajar.</p>
+          <div class="meta">
+            <a class="btn btn-ghost" href="#" target="_blank" rel="noopener">Abstrak</a>
+            <a class="btn btn-accent" href="#" target="_blank" rel="noopener">PDF</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- E-books & Resources -->
+    <section>
+      <h2 class="section-title">E-books & Resources</h2>
+      <div class="pub-grid">
+        <article class="card pub-card" data-tags="ebook confidence speaking">
+          <span class="badge">E-book</span>
+          <h3>Cara Kilat Atasi Grogi Public Speaking</h3>
+          <small>2024 • PDF</small>
+          <p>Checklist 7 langkah dan latihan napas untuk menenangkan sistem saraf sebelum tampil.</p>
+          <div class="meta">
+            <a class="btn btn-accent" href="#" target="_blank" rel="noopener">Download</a>
+          </div>
+        </article>
+
+        <article class="card pub-card" data-tags="audio relaxation confidence">
+          <span class="badge">Audio</span>
+          <h3>Audio Relaksasi Percaya Diri (10′)</h3>
+          <small>MP3</small>
+          <p>Latihan guided-breathing dan visualisasi sebelum presentasi penting.</p>
+          <div class="meta">
+            <a class="btn btn-accent" href="#" target="_blank" rel="noopener">Download</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section>
+      <div class="cta-strip" style="text-align:center;padding:22px;border-radius:var(--rad)">
+        <h2 class="section-title" style="color:#fff;margin:0">Butuh materi untuk seminar atau kelas internal?</h2>
+        <p style="color:#E9EEFF;margin:6px 0 12px">
+          Saya sediakan paket materi, modul latihan, dan slide deck yang dapat disesuaikan untuk tim Anda.
+        </p>
+        <a class="btn btn-accent" href="https://wa.me/62895800202816?text=Halo%20Dokter%2C%20saya%20ingin%20diskusi%20materi%20untuk%20seminar%2Fkelas%20internal.">Diskusikan via WhatsApp</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container" style="display:grid;gap:12px;grid-template-columns:1fr auto;align-items:center">
+      <div>
+        <div class="brand">Dr. Kurniawan</div>
+        <small>© <span id="y"></span> SpeakUp Center • Public Speaking & Kepercayaan Diri</small>
+      </div>
+      <div>
+        <a class="btn btn-accent" href="https://wa.me/62895800202816?text=Halo%20Dokter%2C%20saya%20ingin%20konsultasi">WhatsApp</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Filter + search sederhana (opsional)
+    const chips=[...document.querySelectorAll('.chip')];
+    const cards=[...document.querySelectorAll('.pub-card')];
+    const q=document.getElementById('q');
+    let active='all';
+    function apply(){
+      const s=(q?.value||'').toLowerCase();
+      cards.forEach(c=>{
+        const tags=(c.dataset.tags||'').toLowerCase();
+        const text=c.innerText.toLowerCase();
+        const okTag=active==='all'||tags.includes(active);
+        const okText=!s||text.includes(s);
+        c.style.display=(okTag&&okText)?'':'none';
+      });
+    }
+    chips.forEach(ch=>ch.addEventListener('click',()=>{active=ch.dataset.tag;apply()}));
+    q?.addEventListener('input',apply);
+    document.getElementById('y').textContent=new Date().getFullYear();
+
+    const tog = document.querySelector('.nav-toggle');
+  const links = document.querySelector('.nav-links');
+
+  if (tog && links) {
+    tog.addEventListener('click', (e) => {
+      e.stopPropagation(); // supaya klik di tombol gak kena listener body
+      const open = links.classList.toggle('show');
+      tog.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+
+    // klik di luar navbar -> tutup menu
+    document.addEventListener('click', (e) => {
+      const clickInsideNav = links.contains(e.target) || tog.contains(e.target);
+      if (!clickInsideNav && links.classList.contains('show')) {
+        links.classList.remove('show');
+        tog.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+  </script>
+</body>
+</html>

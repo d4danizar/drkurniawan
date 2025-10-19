@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Dashboard Gallery — Dr. Kurniawan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{--c:#202DA1;--c2:#2D82CD;--gold:#F3C90D;--ink:#0f102a;--muted:#5c5f73;--rad:14px;--sh:0 10px 24px rgba(0,0,0,.12)}
+    *{box-sizing:border-box}
+    body{margin:0; font-family:Inter, system-ui; color:var(--ink); background:#f8f9ff}
+    header{position:sticky;top:0;z-index:10; background:linear-gradient(90deg,var(--c),var(--c2)); color:#fff; padding:14px 18px; box-shadow:0 6px 18px rgba(0,0,0,.15)}
+    h1{font-family:"Bebas Neue",system-ui; letter-spacing:.02em; margin:0}
+    .wrap{max-width:1100px; margin:18px auto; padding:0 16px}
+    .panel{background:#fff; border-radius:var(--rad); box-shadow:var(--sh); padding:14px}
+    .grid{display:grid; gap:12px; grid-template-columns: 1.15fr .85fr}
+    label{font-weight:600; font-size:.92rem}
+    input,select,textarea{width:100%; padding:.7rem .8rem; border:1px solid #e3e6f2; border-radius:10px}
+    textarea{min-height:84px; resize:vertical}
+    .row{display:grid; gap:10px; grid-template-columns:1fr 1fr}
+    .actions{display:flex; gap:10px; flex-wrap:wrap}
+    .btn{display:inline-flex; align-items:center; gap:.5rem; padding:.75rem 1rem; border-radius:10px; border:1px solid #e3e6f2; background:#fff; font-weight:700; cursor:pointer}
+    .btn.primary{background:var(--gold)}
+    .btn.save{background:#1e293b; color:#fff}
+    .btn.warn{background:#ef4444; color:#fff}
+    .btn.ghost{background:transparent}
+    .hint{color:var(--muted); font-size:.88rem}
+
+    /* Table */
+    table{width:100%; border-collapse:separate; border-spacing:0 10px}
+    thead th{font-size:.86rem; color:#445; text-transform:uppercase; letter-spacing:.04em}
+    tbody tr{background:#fff; box-shadow:var(--sh)}
+    td,th{padding:10px 12px; vertical-align:top}
+    tr .handle{cursor:grab}
+    .tag{display:inline-block; background:#eef2ff; border:1px solid #e3e8ff; padding:.2rem .5rem; border-radius:999px; margin-right:6px; font-size:.82rem}
+    .pill{display:inline-block; padding:.2rem .5rem; border-radius:999px; font-weight:700; background:#f7f8ff}
+    .thumb{width:100px; aspect-ratio:16/9; object-fit:cover; border-radius:8px}
+
+    @media (max-width: 960px){ .grid{grid-template-columns:1fr} .row{grid-template-columns:1fr} }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Dashboard Gallery</h1>
+    <div class="hint">Tanpa backend. Data disimpan di <strong>LocalStorage</strong> dan bisa diexport ke <code>gallery-data.json</code>.</div>
+  </header>
+
+  <main class="wrap">
+    <section class="grid">
+      <!-- Form -->
+      <div class="panel">
+        <h2>Tambah / Edit Item</h2>
+        <div class="row">
+          <div>
+            <label>Judul / Caption</label>
+            <input id="f_title" placeholder="Mis. Seminar Dosen – Retorika Akademik"/>
+          </div>
+          <div>
+            <label>Kategori</label>
+            <select id="f_cat">
+              <option value="seminar">Seminar</option>
+              <option value="workshop">Workshop</option>
+              <option value="keynote">Keynote</option>
+              <option value="school">Sekolah/Komunitas</option>
+              <option value="media">Media/TV</option>
+              <option value="video">Video</option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>Jenis</label>
+            <select id="f_type">
+              <option value="image">Gambar</option>
+              <option value="video">YouTube</option>
+            </select>
+          </div>
+          <div>
+            <label>Tanggal (opsional)</label>
+            <input id="f_date" type="date"/>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>URL Media</label>
+            <input id="f_src" placeholder="/assets/gallery/1.jpg atau YOUTUBE_ID"/>
+            <div class="hint">Gambar: path file. Video: masukkan <em>YouTube ID</em> saja.</div>
+          </div>
+          <div>
+            <label>Thumbnail (opsional, untuk video)</label>
+            <input id="f_thumb" placeholder="/assets/gallery/thumb-vid-1.jpg"/>
+          </div>
+        </div>
+        <div>
+          <label>Tags (pisahkan koma)</label>
+          <input id="f_tags" placeholder="mis. dosen, onsite, pitching"/>
+        </div>
+        <div>
+          <label>Deskripsi (opsional)</label>
+          <textarea id="f_desc" placeholder="Ringkasan kegiatan atau catatan singkat"></textarea>
+        </div>
+        <div class="actions">
+          <button class="btn primary" id="btnAdd">Tambah</button>
+          <button class="btn" id="btnUpdate" disabled>Update</button>
+          <button class="btn ghost" id="btnReset">Reset</button>
+        </div>
+      </div>
+
+      <!-- Data Panel -->
+      <div class="panel">
+        <h2>Data Gallery</h2>
+        <div class="actions" style="margin-bottom:8px">
+          <button class="btn save" id="btnExport">Export JSON</button>
+          <label class="btn" for="imp">Import JSON<input id="imp" type="file" accept="application/json" hidden></label>
+          <button class="btn warn" id="btnClear">Clear Local</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th style="width:24px">⇅</th>
+              <th>Preview</th>
+              <th>Judul</th>
+              <th>Info</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Cara Publish</h2>
+      <ol>
+        <li>Klik <strong>Export JSON</strong> → simpan sebagai <code>gallery-data.json</code> di root situs atau di <code>/assets/</code>.</li>
+        <li>Di <code>gallery.html</code>, panggil <code>fetch('gallery-data.json')</code> (atau path yang kamu pilih) untuk render otomatis.</li>
+      </ol>
+      <p class="hint">Tips: bisa juga commit file JSON ke repo dan host static (GitHub Pages/Netlify/etc.).</p>
+    </section>
+  </main>
+
+  <script>
+    // ===== State =====
+    const KEY = 'gallery_items_v1';
+    let items = JSON.parse(localStorage.getItem(KEY) || '[]');
+    let editIndex = -1;
+
+    // ===== Elements =====
+    const rows = document.getElementById('rows');
+    const f = {
+      title: document.getElementById('f_title'),
+      cat: document.getElementById('f_cat'),
+      type: document.getElementById('f_type'),
+      date: document.getElementById('f_date'),
+      src: document.getElementById('f_src'),
+      thumb: document.getElementById('f_thumb'),
+      tags: document.getElementById('f_tags'),
+      desc: document.getElementById('f_desc')
+    };
+
+    const btnAdd = document.getElementById('btnAdd');
+    const btnUpdate = document.getElementById('btnUpdate');
+    const btnReset = document.getElementById('btnReset');
+
+    // ===== Utils =====
+    const uid = ()=> Math.random().toString(36).slice(2,10);
+
+    function toRow(it, i){
+      const tr = document.createElement('tr');
+      tr.draggable = true;
+      tr.innerHTML = `
+        <td class="handle" title="Drag to reorder">⋮⋮</td>
+        <td>${it.type==='video' ? `<img class="thumb" src="${it.thumb||`https://i.ytimg.com/vi/${it.src}/hqdefault.jpg`}" alt="thumb">` : `<img class="thumb" src="${it.src}" alt="thumb">`}</td>
+        <td><strong>${it.title||''}</strong><br><span class="pill">${it.category||''}</span> <small>${it.date||''}</small></td>
+        <td>
+          <div class="hint">${it.type.toUpperCase()} • ${it.src}</div>
+          ${(it.tags||[]).map(t=>`<span class='tag'>${t}</span>`).join(' ')}
+          ${it.desc? `<div class="hint">${it.desc}</div>`:''}
+        </td>
+        <td>
+          <button class="btn" data-act="edit">Edit</button>
+          <button class="btn warn" data-act="del">Hapus</button>
+        </td>`;
+
+      // drag-n-drop reorder
+      tr.addEventListener('dragstart', e=>{ tr.classList.add('drag'); e.dataTransfer.setData('text/plain', i.toString()); });
+      tr.addEventListener('dragend', ()=> tr.classList.remove('drag'));
+      tr.addEventListener('dragover', e=> e.preventDefault());
+      tr.addEventListener('drop', e=>{
+        e.preventDefault();
+        const from = +e.dataTransfer.getData('text/plain');
+        const to = i;
+        if(from===to) return;
+        const moved = items.splice(from,1)[0];
+        items.splice(to,0,moved);
+        save();
+      });
+
+      tr.querySelector('[data-act="edit"]').onclick = ()=> loadToForm(i);
+      tr.querySelector('[data-act="del"]').onclick = ()=> { if(confirm('Hapus item ini?')){ items.splice(i,1); save(); } };
+      return tr;
+    }
+
+    function render(){
+      rows.innerHTML = '';
+      items.forEach((it,i)=> rows.appendChild(toRow(it,i)));
+    }
+
+    function save(){
+      localStorage.setItem(KEY, JSON.stringify(items));
+      render();
+      resetForm();
+    }
+
+    function resetForm(){
+      editIndex = -1; btnUpdate.disabled = true; btnAdd.disabled = false;
+      for(const k in f){ f[k].value = ''; }
+      f.cat.value = 'seminar'; f.type.value = 'image';
+    }
+
+    function loadToForm(i){
+      const it = items[i]; if(!it) return;
+      editIndex = i; btnUpdate.disabled = false; btnAdd.disabled = true;
+      f.title.value = it.title||''; f.cat.value = it.category||'seminar'; f.type.value = it.type||'image';
+      f.date.value = it.date||''; f.src.value = it.src||''; f.thumb.value = it.thumb||'';
+      f.tags.value = (it.tags||[]).join(', '); f.desc.value = it.desc||'';
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+
+    // ===== Actions =====
+    btnAdd.onclick = ()=>{
+      const it = {
+        id: uid(),
+        title: f.title.value.trim(),
+        category: f.cat.value,
+        type: f.type.value,
+        date: f.date.value,
+        src: f.src.value.trim(),
+        thumb: f.thumb.value.trim(),
+        tags: f.tags.value.split(',').map(s=>s.trim()).filter(Boolean),
+        desc: f.desc.value.trim()
+      };
+      if(!it.title || !it.src){ alert('Judul dan URL Media wajib diisi.'); return; }
+      items.push(it); save();
+    };
+
+    btnUpdate.onclick = ()=>{
+      if(editIndex<0) return;
+      const it = items[editIndex];
+      it.title = f.title.value.trim();
+      it.category = f.cat.value; it.type = f.type.value; it.date = f.date.value;
+      it.src = f.src.value.trim(); it.thumb = f.thumb.value.trim();
+      it.tags = f.tags.value.split(',').map(s=>s.trim()).filter(Boolean);
+      it.desc = f.desc.value.trim();
+      if(!it.title || !it.src){ alert('Judul dan URL Media wajib diisi.'); return; }
+      save();
+    };
+
+    btnReset.onclick = resetForm;
+
+    // Import/Export
+    document.getElementById('btnExport').onclick = ()=>{
+      const blob = new Blob([JSON.stringify({items}, null, 2)], {type:'application/json'});
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'gallery-data.json'; a.click(); URL.revokeObjectURL(a.href);
+    };
+    document.getElementById('imp').onchange = (e)=>{
+      const file = e.target.files[0]; if(!file) return;
+      const rd = new FileReader();
+      rd.onload = ()=>{
+        try{ const data = JSON.parse(rd.result); if(Array.isArray(data)) items = data; else if(Array.isArray(data.items)) items = data.items; else throw new Error('Format tidak dikenal'); save(); }
+        catch(err){ alert('Gagal import: '+err.message); }
+      };
+      rd.readAsText(file);
+    };
+    document.getElementById('btnClear').onclick = ()=>{ if(confirm('Hapus semua data di LocalStorage?')){ localStorage.removeItem(KEY); items=[]; render(); resetForm(); } };
+
+    // Init
+    render();
+  </script>
+</body>
+</html>

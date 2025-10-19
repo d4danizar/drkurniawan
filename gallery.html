@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Gallery – Dr. Kurniawan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    /* ===== Gallery styles: mengikuti bahasa visual publications/programs ===== */
+    .filters{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 18px}
+    .chip{padding:.45rem .7rem;border-radius:999px;background:#F2F5FF;border:1px solid #E3E8FF;cursor:pointer}
+    .search{padding:.65rem .8rem;border:1px solid #E6E7F2;border-radius:12px;min-width:240px}
+
+    .gal-grid{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+    .gal-item{position:relative;border-radius:12px;overflow:hidden;box-shadow:var(--shadow);background:#000}
+    .gal-item img{width:100%;height:100%;object-fit:cover;display:block}
+    .gal-item .cap{position:absolute;inset:auto 0 0 0;padding:6px 10px;color:#fff;background:linear-gradient(180deg,rgba(0,0,0,0) 0%,rgba(0,0,0,.65) 100%);font-size:.9rem}
+
+    .gal-item.video::after{content:"▶";position:absolute;inset:8px auto auto 8px;background:rgba(0,0,0,.6);color:#fff;border-radius:8px;padding:.15rem .4rem;font-weight:800}
+
+    /* Lightbox dialog */
+    .lightbox{border:none;background:rgba(0,0,0,.75);padding:0;width:100%;height:100%}
+    .lb-wrap{position:relative;width:min(1100px,92vw);margin:6vh auto;background:#000;border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
+    .lightbox img,.lightbox iframe{display:block;width:100%;aspect-ratio:16/9;border:0}
+    .lb-close{position:absolute;top:8px;right:8px;z-index:2;border:none;background:rgba(255,255,255,.92);padding:.4rem .6rem;border-radius:10px;cursor:pointer}
+
+    .meta-bar{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 12px;color:#C9D4FF;background:#0F102A}
+    .meta-bar small{opacity:.85}
+  </style>
+</head>
+<body>
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="brand"><a href="index.html">Dr. Kurniawan</a></div>
+    <button class="nav-toggle" aria-expanded="false" aria-label="Toggle menu">☰</button>
+    <div class="nav-links">
+      <a class="btn btn-ghost" href="index.html#about">About</a>
+      <a class="btn btn-ghost" href="publications.html">Publications</a>
+      <a class="btn btn-ghost" href="programs.html">Programs</a>
+      <a class="btn btn-accent" id="waTop" href="#">WhatsApp</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <svg class="skyline" viewBox="0 0 1200 140" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0,120 L80,110 L120,118 L180,95 L220,95 L240,70 L260,95 L320,90 L360,94 L400,70 L430,70 L430,110 L470,105 L520,85 L560,100 L600,80 L640,95 L700,70 L740,70 L760,90 L820,92 L880,80 L930,95 L980,88 L1030,96 L1100,85 L1160,100 L1200,96 L1200,140 L0,140 Z" fill="#000" opacity=".35"/>
+    </svg>
+    <div class="inner">
+      <h1 class="title">Gallery</h1>
+      <p class="subtitle" style="color:#E8ECFF;max-width:760px">Dokumentasi kegiatan: seminar, workshop, keynote, dan kelas SpeakUp. Foto & video pilihan.</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- Controls -->
+    <div class="filters">
+      <input id="q" class="search" placeholder="Cari… (mis. seminar, korporat, sekolah)"/>
+      <span class="chip" data-tag="all">Semua</span>
+      <span class="chip" data-tag="seminar">Seminar</span>
+      <span class="chip" data-tag="workshop">Workshop</span>
+      <span class="chip" data-tag="keynote">Keynote</span>
+      <span class="chip" data-tag="school">Sekolah/Komunitas</span>
+      <span class="chip" data-tag="media">Media/TV</span>
+      <span class="chip" data-tag="video">Video</span>
+    </div>
+
+    <!-- Grid -->
+    <section>
+      <div class="gal-grid" id="gal"></div>
+    </section>
+  </main>
+
+  <!-- Lightbox dialog (image/video) -->
+  <dialog id="lightbox" class="lightbox" aria-label="Preview media">
+    <div class="lb-wrap">
+      <button class="lb-close" aria-label="Close">✕</button>
+      <img id="lbImg" alt="" hidden>
+      <iframe id="lbVid" src="" title="Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen hidden></iframe>
+      <div class="meta-bar"><small id="lbMeta">&nbsp;</small><small id="lbCount">&nbsp;</small></div>
+    </div>
+  </dialog>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container" style="display:grid;gap:12px;grid-template-columns:1fr auto;align-items:center">
+      <div>
+        <div class="brand">Dr. Kurniawan</div>
+        <small>© <span id="y"></span> SpeakUp Center • Gallery</small>
+      </div>
+      <div>
+        <a class="btn btn-accent" id="waFoot" href="#">WhatsApp</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+
+  // ===== WhatsApp helper (biarkan seperti di file kamu) =====
+  const WA_NUMBER = '62895800202816';
+  const WA_BASE = `https://wa.me/${WA_NUMBER}`;
+  const waHref = (text)=> `${WA_BASE}?text=${encodeURIComponent(text || 'Halo Dr. Kurniawan, saya ingin berdiskusi.')}`;
+  document.getElementById('waTop').href = waHref('Halo Dokter, saya ingin berdiskusi.');
+  document.getElementById('waFoot').href = waHref();
+  document.getElementById('y').textContent = new Date().getFullYear();
+
+  // ===== Navbar toggle (biarkan seperti di file kamu) =====
+  const tog=document.querySelector('.nav-toggle');
+  const links=document.querySelector('.nav-links');
+  if(tog&&links){
+    tog.addEventListener('click',(e)=>{e.stopPropagation();const open=links.classList.toggle('show');tog.setAttribute('aria-expanded',open?'true':'false');});
+    document.addEventListener('click',(e)=>{const inside=links.contains(e.target)||tog.contains(e.target);if(!inside&&links.classList.contains('show')){links.classList.remove('show');tog.setAttribute('aria-expanded','false');}});
+  }
+
+  // ===== Filter + Search (versi dinamis) =====
+  const filtersEl = document.querySelector('.filters');
+  const q = document.getElementById('q');
+  const lbCount = document.getElementById('lbCount');
+  let active = 'all';
+
+  // selalu ambil item terbaru yang sedang ada di DOM
+  const getItems = () => [...document.querySelectorAll('.gal-item')];
+
+  function apply(){
+    const items = getItems();
+    const s = (q?.value || '').toLowerCase();
+    let shown = 0;
+    items.forEach(el=>{
+      const tags  = (el.dataset.tags  || '').toLowerCase();
+      const title = (el.dataset.title || '').toLowerCase();
+      const okTag  = active==='all' || tags.includes(active);
+      const okText = !s || title.includes(s) || tags.includes(s);
+      const vis = okTag && okText;
+      el.style.display = vis ? 'block' : 'none';
+      if(vis) shown++;
+    });
+    if(lbCount) lbCount.textContent = shown ? `${shown} media` : 'Tidak ada hasil';
+  }
+
+  // event delegation untuk chip (nggak perlu rebind setelah fetch)
+  filtersEl?.addEventListener('click', (e)=>{
+    const chip = e.target.closest('.chip');
+    if(!chip) return;
+    active = chip.dataset.tag || 'all';
+    apply();
+  });
+  q?.addEventListener('input', apply);
+
+  // ===== Lightbox (image/video) + keyboard nav (delegation juga) =====
+  const lb     = document.getElementById('lightbox');
+  const lbImg  = document.getElementById('lbImg');
+  const lbVid  = document.getElementById('lbVid');
+  const lbMeta = document.getElementById('lbMeta');
+  const lbClose= document.querySelector('.lb-close');
+  const grid   = document.getElementById('gal');
+
+  function openImage(src, title){
+    lbVid.hidden = true;  lbVid.src = '';
+    lbImg.hidden = false; lbImg.src = src; lbImg.alt = title || '';
+    lbMeta.textContent = title || '';
+    lb.showModal();
+  }
+  function openVideo(id, title){
+    lbImg.hidden = true;  lbImg.src = '';
+    lbVid.hidden = false; lbVid.src = `https://www.youtube.com/embed/${id}`;
+    lbMeta.textContent = title || '';
+    lb.showModal();
+  }
+
+  // klik pada grid mana pun → cari figure terdekat
+  grid.addEventListener('click', (e)=>{
+    const fig = e.target.closest('.gal-item');
+    if(!fig) return;
+    const title = fig.dataset.title || '';
+    if(fig.classList.contains('video')) openVideo(fig.dataset.video, title);
+    else {
+      const img = fig.querySelector('img');
+      if(img) openImage(img.src, title);
+    }
+    // simpan index visible untuk navigasi keyboard
+    const visible = getItems().filter(el => el.style.display !== 'none');
+    lb.dataset.idx = visible.indexOf(fig);
+  });
+
+  function showByIndex(i){
+    const visible = getItems().filter(el => el.style.display !== 'none');
+    if(!visible.length) return;
+    const n = ((i % visible.length) + visible.length) % visible.length;
+    const el = visible[n];
+    const title = el.dataset.title || '';
+    if(el.classList.contains('video')) openVideo(el.dataset.video, title);
+    else {
+      const img = el.querySelector('img');
+      if(img) openImage(img.src, title);
+    }
+    lb.dataset.idx = n; // simpan idx relatif di daftar visible
+  }
+
+  lb.addEventListener('keydown',(e)=>{
+    const idx = parseInt(lb.dataset.idx || '0', 10);
+    if(e.key==='Escape')      lb.close();
+    if(e.key==='ArrowRight')  showByIndex(idx+1);
+    if(e.key==='ArrowLeft')   showByIndex(idx-1);
+  });
+  lbClose?.addEventListener('click',()=> lb.close());
+  lb.addEventListener('click',(e)=>{ if(e.target===lb) lb.close(); });
+  lb.addEventListener('close',()=>{ lbVid.src=''; });
+
+  // ===== Loader: fetch JSON → render grid → apply filter =====
+  async function loadGallery(){
+    try{
+      const res = await fetch('gallery-data.json', { cache: 'no-store' }); // pakai path relatif
+      if(!res.ok) throw new Error('HTTP '+res.status);
+      const data  = await res.json();
+      const items = Array.isArray(data) ? data : (data.items || []);
+
+      grid.innerHTML = '';
+      items.forEach(it=>{
+        const fig = document.createElement('figure');
+        fig.className = 'gal-item' + (it.type==='video' ? ' video' : '');
+        fig.dataset.tags  = [it.category, ...(it.tags||[])].join(' ');
+        fig.dataset.title = it.title || '';
+
+        const img = document.createElement('img');
+        img.loading = 'lazy';
+        if(it.type === 'video'){
+          img.src = it.thumb || `https://i.ytimg.com/vi/${it.src}/hqdefault.jpg`;
+          img.alt = it.title || 'Video';
+          fig.dataset.video = it.src; // YouTube ID
+        } else {
+          img.src = it.src;
+          img.alt = it.title || 'Foto';
+        }
+
+        const cap = document.createElement('figcaption');
+        cap.className = 'cap';
+        cap.textContent = it.title || '';
+
+        fig.appendChild(img);
+        fig.appendChild(cap);
+        grid.appendChild(fig);
+      });
+
+      // setelah render, jalankan filter pertama kali
+      apply();
+    }catch(e){
+      console.error('Gagal memuat gallery-data.json', e);
+    }
+  }
+  loadGallery();
+
+
+  </script>
+</body>
+</html>

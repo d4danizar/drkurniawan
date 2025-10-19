@@ -1,0 +1,67 @@
+# Backend pakai Netlify Identity + Git Gateway
+backend:
+  name: git-gateway
+  branch: main
+
+# Tempat file upload disimpan di repo + path publiknya
+media_folder: "assets/uploads"
+public_folder: "/assets/uploads"
+
+# Draft → review → publish (boleh ganti ke 'simple' kalau mau langsung publish)
+publish_mode: editorial_workflow
+
+locale: 'en'
+slug:
+  encoding: "ascii"
+  clean_accents: true
+  sanitize_replacement: "-"
+
+# Koleksi konten yang menulis ke JSON yang sudah dipakai oleh blog.html & gallery.html
+collections:
+  # 1) Blog: menulis ke blog-data.json
+  - label: "Blog"
+    name: "blog"
+    files:
+      - label: "Posts"
+        name: "posts"
+        file: "blog-data.json"
+        format: "json"
+        fields:
+          - label: "Posts"
+            name: "posts"
+            widget: list
+            summary: "{{fields.date}} — {{fields.title}}"
+            fields:
+              - { label: "ID", name: "id", widget: "string" }
+              - { label: "Slug", name: "slug", widget: "string" }
+              - { label: "Title", name: "title", widget: "string" }
+              - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", time_format: false }
+              - { label: "Author", name: "author", widget: "string", default: "Dr. Kurniawan" }
+              - { label: "Cover", name: "cover", widget: "image", allow_multiple: false, required: false }
+              - { label: "Tags", name: "tags", widget: "list", default: [], required: false }
+              - { label: "Summary", name: "excerpt", widget: "text", required: false }
+              - { label: "Content (Markdown/HTML)", name: "content", widget: "text" }
+              - { label: "Category", name: "cat", widget: "select", options: ["public-speaking","self-esteem","parenting","career","notes"], default: "notes" }
+              - { label: "Read Minutes (optional)", name: "readMins", widget: "number", required: false, min: 1 }
+
+  # 2) Gallery: menulis ke gallery-data.json
+  - label: "Gallery"
+    name: "gallery"
+    files:
+      - label: "Items"
+        name: "items"
+        file: "gallery-data.json"
+        format: "json"
+        fields:
+          - label: "Items"
+            name: "items"
+            widget: list
+            summary: "{{fields.date}} — {{fields.title}}"
+            fields:
+              - { label: "ID", name: "id", widget: "string" }
+              - { label: "Type", name: "type", widget: "select", options: ["image","video"], default: "image" }
+              - { label: "Source (image path / YouTube ID)", name: "src", widget: "string" }
+              - { label: "Thumbnail (optional)", name: "thumb", widget: "image", required: false }
+              - { label: "Title", name: "title", widget: "string" }
+              - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", time_format: false }
+              - { label: "Tags", name: "tags", widget: "list", default: [], required: false }

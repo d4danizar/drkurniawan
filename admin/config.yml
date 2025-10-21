@@ -1,24 +1,20 @@
-# Backend pakai Netlify Identity + Git Gateway
 backend:
   name: git-gateway
   branch: main
 
-# Tempat file upload disimpan di repo + path publiknya
-media_folder: "assets/uploads"
-public_folder: "/assets/uploads"
+media_folder: "assets/uploads"     # file tersimpan di repo
+public_folder: "/assets/uploads"   # path publik untuk di HTML
 
-# Draft → review → publish (boleh ganti ke 'simple' kalau mau langsung publish)
 publish_mode: editorial_workflow
+locale: "en"
 
-locale: 'en'
 slug:
   encoding: "ascii"
   clean_accents: true
   sanitize_replacement: "-"
 
-# Koleksi konten yang menulis ke JSON yang sudah dipakai oleh blog.html & gallery.html
 collections:
-  # 1) Blog: menulis ke blog-data.json
+  # ===================== BLOG =====================
   - label: "Blog"
     name: "blog"
     files:
@@ -29,22 +25,22 @@ collections:
         fields:
           - label: "Posts"
             name: "posts"
-            widget: list
+            widget: "list"
             summary: "{{fields.date}} — {{fields.title}}"
             fields:
               - { label: "ID", name: "id", widget: "string" }
               - { label: "Slug", name: "slug", widget: "string" }
               - { label: "Title", name: "title", widget: "string" }
               - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", time_format: false }
-              - { label: "Author", name: "author", widget: "string", default: "Dr. Kurniawan" }
-              - { label: "Cover", name: "cover", widget: "image", allow_multiple: false, required: false }
+              - { label: "Author", name: "author", widget: "string", default: "Dr. Kurniawan", required: false }
+              - { label: "Cover (image)", name: "cover", widget: "image", allow_multiple: false, required: false }
               - { label: "Tags", name: "tags", widget: "list", default: [], required: false }
-              - { label: "Summary", name: "excerpt", widget: "text", required: false }
+              - { label: "Excerpt (ringkas)", name: "excerpt", widget: "text", required: false }
               - { label: "Content (Markdown/HTML)", name: "content", widget: "text" }
-              - { label: "Category", name: "cat", widget: "select", options: ["public-speaking","self-esteem","parenting","career","notes"], default: "notes" }
-              - { label: "Read Minutes (optional)", name: "readMins", widget: "number", required: false, min: 1 }
+              - { label: "Category", name: "cat", widget: "select", options: ["public-speaking","self-esteem","parenting","career","notes"], default: "notes", required: false }
+              - { label: "Read Minutes", name: "readMins", widget: "number", min: 1, required: false }
 
-  # 2) Gallery: menulis ke gallery-data.json
+  # ==================== GALLERY ====================
   - label: "Gallery"
     name: "gallery"
     files:
@@ -55,7 +51,7 @@ collections:
         fields:
           - label: "Items"
             name: "items"
-            widget: list
+            widget: "list"
             summary: "{{fields.date}} — {{fields.title}}"
             fields:
               - { label: "ID", name: "id", widget: "string" }
@@ -65,3 +61,4 @@ collections:
               - { label: "Title", name: "title", widget: "string" }
               - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", time_format: false }
               - { label: "Tags", name: "tags", widget: "list", default: [], required: false }
+              - { label: "Category (untuk chip filter)", name: "category", widget: "string", required: false }

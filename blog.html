@@ -152,7 +152,7 @@
         article.dataset.tags = [cat, ...(p.tags || [])].join(' ');
 
         article.innerHTML = `
-          <a href="blog.html#${p.slug}">
+          <a href="post.html?slug=${p.slug}>
             ${p.cover ? `<img src="${p.cover}" alt="${p.title}">` : ''}
             <small>${p.date || ''} • ${mins} min read</small>
             <h3>${p.title || ''}</h3>
@@ -192,38 +192,7 @@
         });
       });
 
-      // === Tampilkan artikel detail kalau ada #slug di URL ===
-      const slug = location.hash.slice(1);
-      if (slug) {
-        const post = posts.find(x => x.slug === slug);
-        if (post) {
-          const mins = post.readMins || estimateReadMins(post.content || '');
-          const detail = document.createElement('section');
-          detail.className = 'container';
-          detail.style.marginTop = '20px';
-
-          detail.innerHTML = `
-            <h2 class="section-title">${post.title}</h2>
-            <div class="muted" style="margin-bottom:8px">
-              ${post.date || ''} • ${post.cat || ''} • ${mins} min read
-            </div>
-            ${post.cover ? `<img src="${post.cover}" alt="${post.title}" style="border-radius:12px; margin:10px 0 14px">` : ''}
-            <div id="post-body"></div>
-          `;
-          document.body.appendChild(detail);
-
-          // Markdown parser sederhana
-          let md = (post.content || '')
-            .replace(/^### (.*)$/gm, '<h3>$1</h3>')
-            .replace(/^## (.*)$/gm, '<h2>$1</h2>')
-            .replace(/^# (.*)$/gm, '<h1>$1</h1>')
-            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-            .replace(/\*(.*?)\*/g, '<em>$1</em>')
-            .replace(/\n\n/g, '</p><p>');
-
-          document.getElementById('post-body').innerHTML = `<p>${md}</p>`;
-        }
-      }
+      
     } catch (err) {
       console.warn('Gagal memuat blog-data.json:', err);
     }
@@ -232,3 +201,4 @@
   
 </body>
 </html>
+

@@ -127,7 +127,72 @@
       if(desc)  setOG('og:description', desc);
       if(image) setOG('og:image', image);
     }
+    
+// --- BACA DARI blog-data.json DULU
+async function loadFromJson(slug) {
+  try {
+    const res = await fetch('blog-data.json', { cache: 'no-store' });
+    if (!res.ok) return false;
+    const data = await res.json();
+    const posts = Array.isArray(data) ? data : data.posts || [];
+    const p = posts.find(x => x.slug === slug);
+    if (!p) return false;
 
+    // Header
+    const title = p.title || slug.replace(/[-_]/g,' ').replace(/\b\w/g, c=>c.toUpperCase());
+    document.getElementById('postBadge').style.display = 'inline-block';
+    document.getElementById('postTitle').textContent = title;
+
+    if (p.date) {
+      const d = new Date(p.date);
+      document.getElementById('postDate').style.display = 'inline-block';
+      document.getElementById('postDate').textContent = isNaN(d) ? p.date : d.toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'});
+    }
+
+    if (p.excerpt) {
+      const ex = document.getElementById('postExcerpt');
+      ex.style.display = 'block';
+      ex.textContent = p.excerpt;
+    }
+
+    if (p.cover) {
+      const coverWrap = document.getElementById('coverWrap');
+      const img = document.getElementById('postCover');
+      coverWrap.style.display = 'block';
+      img.src = p.cover;
+      img.alt = title;
+    }
+
+    // Body: dukung markdown atau HTML
+    const raw = p.content || '';
+    const asHtml = /^\s*</.test(raw); // mulai dengan "<" → anggap HTML
+    const html = asHtml ? raw : marked.parse(raw || '');
+    document.getElementById('postBody').innerHTML = window.DOMPurify ? DOMPurify.sanitize(html) : html;
+
+    // Meta SEO
+    (function setMeta(title, desc, image){
+      if(title) document.title = `${title} — Blog`;
+      const ensure = (name, content) => {
+        let m = document.querySelector(`meta[name="${name}"]`);
+        if(!m){ m = document.createElement('meta'); m.setAttribute('name', name); document.head.appendChild(m); }
+        m.setAttribute('content', content);
+      };
+      if(desc) ensure('description', desc);
+      const setOG = (p, c) => {
+        let m = document.querySelector(`meta[property="${p}"]`);
+        if(!m){ m = document.createElement('meta'); m.setAttribute('property', p); document.head.appendChild(m); }
+        m.setAttribute('content', c);
+      };
+      if(title) setOG('og:title', title);
+      if(desc)  setOG('og:description', desc);
+      if(image) setOG('og:image', image);
+    })(title, p.excerpt || '', p.cover || null);
+
+    return true; // sukses dari JSON
+  } catch(_) {
+    return false;
+  }
+}
     // ========= Fetch logic =========
     async function fetchFirst(paths){
       for(const p of paths){
@@ -163,12 +228,18 @@
     }
 
     async function run(){
-      const slug = getSlug();
-      if(!slug){
-        $('#postTitle').textContent = 'Artikel tidak ditemukan';
-        $('#postBody').innerHTML = '<p>Parameter <code>?slug=</code> kosong. <a href="blog.html">Kembali ke Blog</a>.</p>';
-        return;
-      }
+  const slug = getSlug();
+  if(!slug){
+    $('#postTitle').textContent = 'Artikel tidak ditemukan';
+    $('#postBody').innerHTML = '<p>Parameter <code>?slug=</code> kosong. <a href="blog.html">Kembali ke Blog</a>.</p>';
+    return;
+  }
+
+  // ⬇️ Tambahkan baris ini: coba muat dari blog-data.json dulu
+  const okFromJson = await loadFromJson(slug);
+  if (okFromJson) return;
+
+  // ...lanjutkan ke fallback file .md seperti yang sudah ada...
 
       // Kandidat lokasi file Markdown (sesuaikan dengan config Decap kamu)
       const candidates = [
@@ -239,3 +310,4 @@
   </script>
 </body>
 </html>
+

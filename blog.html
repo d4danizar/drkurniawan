@@ -154,17 +154,18 @@
         article.className = 'card';
         article.dataset.tags = [cat, ...(p.tags || [])].join(' ');
 
-        article.innerHTML = `
-          <a href="post.html?slug=${p.slug}>
-            ${p.cover ? `<img src="${p.cover}" alt="${p.title}">` : ''}
-            <small>${p.date || ''} • ${mins} min read</small>
-            <h3>${p.title || ''}</h3>
-            <p>${p.excerpt || ''}</p>
-            <div class="meta">
-              <span class="badge">${cat.replace(/-/g, ' ')}</span>
-            </div>
+       article.innerHTML = `
+          <a href="post.html?slug=${p.slug}">
+          ${p.cover ? `<img src="${p.cover}" alt="${p.title}">` : ''}
+          <small>${p.date || ''} • ${mins} min read</small>
+          <h3>${p.title || ''}</h3>
+          <p>${p.excerpt || ''}</p>
+          <div class="meta">
+            <span class="badge">${cat.replace(/-/g, ' ')}</span>
+          </div>
           </a>
-        `;
+      `;
+
 
         container.appendChild(article);
       });
@@ -204,5 +205,6 @@
   
 </body>
 </html>
+
 
 

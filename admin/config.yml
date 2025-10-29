@@ -62,3 +62,24 @@ collections:
               - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", time_format: false }
               - { label: "Tags", name: "tags", widget: "list", default: [], required: false }
               - { label: "Category (untuk chip filter)", name: "category", widget: "string", required: false }
+
+# =========== Publications ================
+- name: "publications"
+  label: "Publications"
+  folder: "content/publications"
+  create: true
+  slug: "{{slug}}"
+  format: "json"
+  extension: "json"
+  fields:
+    - {label: "Title", name: "title", widget: "string"}
+    - {label: "Type", name: "type", widget: "select", options: ["book", "journal", "ebook"]}
+    - {label: "Authors", name: "authors", widget: "string"}
+    - {label: "Year", name: "year", widget: "number"}
+    - {label: "Tags", name: "tags", widget: "list"}
+    - {label: "Excerpt", name: "excerpt", widget: "text"}
+    - {label: "Cover", name: "cover", widget: "image"}
+    - {label: "Link PDF", name: "link_pdf", widget: "string", required: false}
+    - {label: "Link Buy", name: "link_buy", widget: "string", required: false}
+    - {label: "Link DOI", name: "link_doi", widget: "string", required: false}
+

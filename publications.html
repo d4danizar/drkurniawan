@@ -7,11 +7,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
   <style>
-    /* ===== Filter Chips ===== */
-    .chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:16px}
-    .chip{appearance:none;border:2px solid rgba(255,255,255,.5);background:rgba(15,17,64,.85);color:#fff;padding:.55rem .9rem;border-radius:999px;font-weight:800;letter-spacing:.02em;box-shadow:var(--shadow);transition:transform .15s, background .2s, color .2s, box-shadow .2s, border-color .2s;cursor:pointer}
-    .chip:hover{transform:translateY(-1px);box-shadow:0 6px 14px rgba(0,0,0,.18)}
-    .chip.active{background:var(--c-gold);color:#100810;border-color:transparent}
+    /* ===== Match blog filter design (controls, input, chip) ===== */
+    .controls{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 18px}
+    .input{padding:.65rem .8rem;border:1px solid #E6E7F2;border-radius:12px;min-width:220px}
+    .chip{padding:.45rem .7rem;border-radius:999px;background:#F2F5FF;border:1px solid #E3E8FF;cursor:pointer}
 
     /* ===== Grid & Cards Compact ===== */
     #pubGrid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
@@ -49,18 +48,19 @@
     </div>
   </header>
 
-  <section class="wrap">
-    <input id="search" type="text" placeholder="Cari publikasi..." class="input" />
-    <div class="chips" id="filterChips">
-      <button class="chip active" data-type="all">All</button>
-      <button class="chip" data-type="book">Books</button>
-      <button class="chip" data-type="journal">Journals</button>
-      <button class="chip" data-type="ebook">E-Books</button>
+  <main class="wrap">
+    <!-- Controls follow blog (2).html: input + chips inside .controls -->
+    <div class="controls">
+      <input id="search" class="input" placeholder="Cari publikasi... (mis. journal, 2024, DOI)"/>
+      <span class="chip" data-type="all">All</span>
+      <span class="chip" data-type="book">Books</span>
+      <span class="chip" data-type="journal">Journals</span>
+      <span class="chip" data-type="ebook">E-Books</span>
     </div>
-  </section>
 
-  <section class="wrap" id="pubGrid" style="margin-top:24px"></section>
-  <p id="emptyMsg" class="muted">Tidak ada hasil ditemukan.</p>
+    <section class="grid" id="pubGrid" style="margin-top:6px"></section>
+    <p id="emptyMsg" class="muted">Tidak ada hasil ditemukan.</p>
+  </main>
 
   <footer>
     <div class="container" style="display:grid;gap:12px;grid-template-columns:1fr auto;align-items:center;">
@@ -75,15 +75,18 @@
   </footer>
 
   <script>
+    // WhatsApp
     const WA_NUMBER = '62895800202816';
     const waHref = text => `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(text||'Halo, saya tertarik dengan karya Anda.')}`;
     document.getElementById('waTop').href = waHref();
     document.getElementById('waFoot').href = waHref();
     document.getElementById('year').textContent = new Date().getFullYear();
 
+    // Fetch + render
     async function loadPublications(){
-      const res = await fetch('publications-data.json');
-      const pubs = await res.json();
+      const res = await fetch('publications-data.json', { cache: 'no-store' });
+      const data = await res.json();
+      const pubs = Array.isArray(data) ? data : (data.items || data.publications || []);
       renderPubs(pubs);
       filter();
     }
@@ -91,41 +94,43 @@
     function renderPubs(pubs){
       const grid = document.getElementById('pubGrid');
       grid.innerHTML = pubs.map(p => `
-        <article class="card" data-type="${p.type}" data-tags="${p.tags.join(',')}">
+        <article class="card" data-type="${p.type}" data-tags="${(p.tags||[]).join(',')}">
           ${p.cover ? `<img src="${p.cover}" alt="${p.title}" class="cover" loading="lazy">` : ''}
           <h3>${p.title}</h3>
-          <p><strong>${p.authors}</strong></p>
-          <small>${p.year}</small>
-          <p>${p.excerpt}</p>
+          <p><strong>${p.authors || ''}</strong></p>
+          <small>${p.year || ''}</small>
+          <p>${p.excerpt || ''}</p>
           <div class="actions" style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
-            ${p.link_pdf ? `<a href="${p.link_pdf}" class="btn btn-ghost" target="_blank">PDF</a>` : ''}
-            ${p.link_buy ? `<a href="${p.link_buy}" class="btn btn-ghost" target="_blank">Buy</a>` : ''}
-            ${p.link_doi ? `<a href="${p.link_doi}" class="btn btn-ghost" target="_blank">DOI</a>` : ''}
+            ${p.link_pdf ? `<a href="${p.link_pdf}" class="btn btn-ghost" target="_blank" rel="noopener">PDF</a>` : ''}
+            ${p.link_buy ? `<a href="${p.link_buy}" class="btn btn-ghost" target="_blank" rel="noopener">Buy</a>` : ''}
+            ${p.link_doi ? `<a href="${p.link_doi}" class="btn btn-ghost" target="_blank" rel="noopener">DOI</a>` : ''}
           </div>
         </article>
       `).join('');
     }
 
+    // Filter behavior mirrors blog (2).html
     const search = document.getElementById('search');
     const chips = document.querySelectorAll('.chip');
+    let activeType = 'all';
+
     search.addEventListener('input', filter);
-    chips.forEach(c => c.addEventListener('click', () => {
-      chips.forEach(ch => ch.classList.remove('active'));
-      c.classList.add('active');
+    chips.forEach(ch => ch.addEventListener('click', () => {
+      activeType = ch.dataset.type;
+      chips.forEach(x => x.classList.toggle('active', x === ch));
       filter();
     }));
 
     function filter(){
-      const q = search.value.toLowerCase();
-      const active = document.querySelector('.chip.active').dataset.type;
+      const q = (search.value || '').toLowerCase();
       const cards = document.querySelectorAll('#pubGrid .card');
       let visible = 0;
       cards.forEach(card => {
-        const matchType = (active === 'all') || (card.dataset.type === active);
+        const matchType = (activeType === 'all') || (card.dataset.type === activeType);
         const matchSearch = card.textContent.toLowerCase().includes(q);
         const show = matchType && matchSearch;
-        card.style.display = show ? 'block' : 'none';
-        if(show) visible++;
+        card.style.display = show ? '' : 'none';
+        if (show) visible++;
       });
       document.getElementById('emptyMsg').style.display = (visible === 0) ? 'block' : 'none';
     }

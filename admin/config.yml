@@ -1,9 +1,9 @@
-  backend:
+backend:
   name: git-gateway
   branch: main
 
-media_folder: "assets/uploads"      # file tersimpan di repo
-public_folder: "/assets/uploads"    # path publik untuk HTML
+media_folder: "assets/uploads"
+public_folder: "/assets/uploads"
 
 publish_mode: editorial_workflow
 locale: "en"
@@ -14,7 +14,6 @@ slug:
   sanitize_replacement: "-"
 
 collections:
-  # ================= BLOG =================
   - label: "Blog"
     name: "blog"
     files:
@@ -28,21 +27,17 @@ collections:
             widget: "list"
             summary: "{{fields.title}} — {{fields.date}}"
             fields:
-              - { label: "ID (opsional)", name: "id", widget: "string", required: false }
               - { label: "Slug", name: "slug", widget: "string" }
               - { label: "Title", name: "title", widget: "string" }
               - { label: "Date", name: "date", widget: "datetime" }
               - { label: "Excerpt", name: "excerpt", widget: "text", required: false }
-              - { label: "Category", name: "cat", widget: "string", required: false }
-              - { label: "Tags", name: "tags", widget: "list", required: false }
               - { label: "Cover", name: "cover", widget: "image", required: false }
-              - { label: "Content (Markdown/HTML)", name: "content", widget: "text" }
+              - { label: "Content", name: "content", widget: "text" }
 
-  # ============= PUBLICATIONS =============
   - label: "Publications"
     name: "publications"
     files:
-      - label: "All Publications (JSON list)"
+      - label: "All Publications"
         name: "all_publications"
         file: "publications-data.json"
         format: "json"
@@ -50,24 +45,19 @@ collections:
           - label: "Items"
             name: "items"
             widget: "list"
-            summary: "{{fields.title}} — {{fields.year}} ({{fields.type}})"
+            summary: "{{fields.title}} — {{fields.year}}"
             fields:
               - { label: "Type", name: "type", widget: "select", options: ["book","journal","ebook","resource"] }
               - { label: "Title", name: "title", widget: "string" }
               - { label: "Authors", name: "authors", widget: "string" }
               - { label: "Year", name: "year", widget: "number" }
-              - { label: "Tags", name: "tags", widget: "list", required: false }
               - { label: "Excerpt", name: "excerpt", widget: "text", required: false }
               - { label: "Cover", name: "cover", widget: "image", required: false }
-              - { label: "Link PDF", name: "link_pdf", widget: "string", required: false }
-              - { label: "Link Buy", name: "link_buy", widget: "string", required: false }
-              - { label: "Link DOI", name: "link_doi", widget: "string", required: false }
 
-  # ================ GALLERY ===============
   - label: "Gallery"
     name: "gallery"
     files:
-      - label: "Items (JSON list)"
+      - label: "Gallery Items"
         name: "items"
         file: "gallery-data.json"
         format: "json"
@@ -80,5 +70,3 @@ collections:
               - { label: "Title", name: "title", widget: "string" }
               - { label: "Image", name: "image", widget: "image" }
               - { label: "Caption", name: "caption", widget: "text", required: false }
-              - { label: "Date", name: "date", widget: "datetime", required: false }
-              - { label: "Tags", name: "tags", widget: "list", required: false }

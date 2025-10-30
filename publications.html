@@ -6,6 +6,55 @@
   <title>Publications | Dr. Kurniawan</title>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ===== Publications: compact tiles ===== */
+#pubGrid{
+  display:grid;
+  gap:12px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+#pubGrid .card{
+  padding:10px;                /* lebih kecil dari default */
+  border-radius:12px;
+  box-shadow: var(--shadow);
+}
+
+#pubGrid .card .cover{
+  width:100%;
+  aspect-ratio: 4 / 3;         /* seragam */
+  object-fit: cover;
+  border-radius:10px;
+}
+
+#pubGrid .card h3{
+  font-size: .95rem;           /* judul lebih kompak */
+  line-height: 1.25;
+  margin: 8px 0 4px;
+}
+
+#pubGrid .card p{ 
+  font-size: .85rem; 
+  margin: 4px 0; 
+}
+
+#pubGrid .card small{ 
+  font-size: .75rem; 
+  opacity:.8; 
+}
+
+#pubGrid .actions .btn{
+  padding: .45rem .6rem;       /* tombol kecil */
+  font-size: .75rem;
+  box-shadow: none;
+}
+
+/* Tambahan spacing responsif */
+@media (max-width: 480px){
+  #pubGrid{ gap:10px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+}
+
+  </style>
 </head>
 
 <body>
@@ -127,3 +176,4 @@
   </script>
 </body>
 </html>
+

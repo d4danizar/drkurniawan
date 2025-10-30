@@ -1,9 +1,9 @@
-backend:
+  backend:
   name: git-gateway
   branch: main
 
-media_folder: "assets/uploads"     # file tersimpan di repo
-public_folder: "/assets/uploads"   # path publik untuk di HTML
+media_folder: "assets/uploads"      # file tersimpan di repo
+public_folder: "/assets/uploads"    # path publik untuk HTML
 
 publish_mode: editorial_workflow
 locale: "en"
@@ -14,11 +14,11 @@ slug:
   sanitize_replacement: "-"
 
 collections:
-  # ===================== BLOG =====================
+  # ================= BLOG =================
   - label: "Blog"
     name: "blog"
     files:
-      - label: "Posts"
+      - label: "Posts (JSON list)"
         name: "posts"
         file: "blog-data.json"
         format: "json"
@@ -26,25 +26,48 @@ collections:
           - label: "Posts"
             name: "posts"
             widget: "list"
-            summary: "{{fields.date}} — {{fields.title}}"
+            summary: "{{fields.title}} — {{fields.date}}"
             fields:
-              - { label: "ID", name: "id", widget: "string" }
+              - { label: "ID (opsional)", name: "id", widget: "string", required: false }
               - { label: "Slug", name: "slug", widget: "string" }
               - { label: "Title", name: "title", widget: "string" }
-              - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", time_format: false }
-              - { label: "Author", name: "author", widget: "string", default: "Dr. Kurniawan", required: false }
-              - { label: "Cover (image)", name: "cover", widget: "image", allow_multiple: false, required: false }
-              - { label: "Tags", name: "tags", widget: "list", default: [], required: false }
-              - { label: "Excerpt (ringkas)", name: "excerpt", widget: "text", required: false }
+              - { label: "Date", name: "date", widget: "datetime" }
+              - { label: "Excerpt", name: "excerpt", widget: "text", required: false }
+              - { label: "Category", name: "cat", widget: "string", required: false }
+              - { label: "Tags", name: "tags", widget: "list", required: false }
+              - { label: "Cover", name: "cover", widget: "image", required: false }
               - { label: "Content (Markdown/HTML)", name: "content", widget: "text" }
-              - { label: "Category", name: "cat", widget: "select", options: ["public-speaking","self-esteem","parenting","career","notes"], default: "notes", required: false }
-              - { label: "Read Minutes", name: "readMins", widget: "number", min: 1, required: false }
 
-  # ==================== GALLERY ====================
+  # ============= PUBLICATIONS =============
+  - label: "Publications"
+    name: "publications"
+    files:
+      - label: "All Publications (JSON list)"
+        name: "all_publications"
+        file: "publications-data.json"
+        format: "json"
+        fields:
+          - label: "Items"
+            name: "items"
+            widget: "list"
+            summary: "{{fields.title}} — {{fields.year}} ({{fields.type}})"
+            fields:
+              - { label: "Type", name: "type", widget: "select", options: ["book","journal","ebook","resource"] }
+              - { label: "Title", name: "title", widget: "string" }
+              - { label: "Authors", name: "authors", widget: "string" }
+              - { label: "Year", name: "year", widget: "number" }
+              - { label: "Tags", name: "tags", widget: "list", required: false }
+              - { label: "Excerpt", name: "excerpt", widget: "text", required: false }
+              - { label: "Cover", name: "cover", widget: "image", required: false }
+              - { label: "Link PDF", name: "link_pdf", widget: "string", required: false }
+              - { label: "Link Buy", name: "link_buy", widget: "string", required: false }
+              - { label: "Link DOI", name: "link_doi", widget: "string", required: false }
+
+  # ================ GALLERY ===============
   - label: "Gallery"
     name: "gallery"
     files:
-      - label: "Items"
+      - label: "Items (JSON list)"
         name: "items"
         file: "gallery-data.json"
         format: "json"
@@ -52,34 +75,10 @@ collections:
           - label: "Items"
             name: "items"
             widget: "list"
-            summary: "{{fields.date}} — {{fields.title}}"
+            summary: "{{fields.title}}"
             fields:
-              - { label: "ID", name: "id", widget: "string" }
-              - { label: "Type", name: "type", widget: "select", options: ["image","video"], default: "image" }
-              - { label: "Source (image path / YouTube ID)", name: "src", widget: "string" }
-              - { label: "Thumbnail (optional)", name: "thumb", widget: "image", required: false }
               - { label: "Title", name: "title", widget: "string" }
-              - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", time_format: false }
-              - { label: "Tags", name: "tags", widget: "list", default: [], required: false }
-              - { label: "Category (untuk chip filter)", name: "category", widget: "string", required: false }
-
-# =========== Publications ================
-- name: "publications"
-  label: "Publications"
-  folder: "content/publications"
-  create: true
-  slug: "{{slug}}"
-  format: "json"
-  extension: "json"
-  fields:
-    - {label: "Title", name: "title", widget: "string"}
-    - {label: "Type", name: "type", widget: "select", options: ["book", "journal", "ebook"]}
-    - {label: "Authors", name: "authors", widget: "string"}
-    - {label: "Year", name: "year", widget: "number"}
-    - {label: "Tags", name: "tags", widget: "list"}
-    - {label: "Excerpt", name: "excerpt", widget: "text"}
-    - {label: "Cover", name: "cover", widget: "image"}
-    - {label: "Link PDF", name: "link_pdf", widget: "string", required: false}
-    - {label: "Link Buy", name: "link_buy", widget: "string", required: false}
-    - {label: "Link DOI", name: "link_doi", widget: "string", required: false}
-
+              - { label: "Image", name: "image", widget: "image" }
+              - { label: "Caption", name: "caption", widget: "text", required: false }
+              - { label: "Date", name: "date", widget: "datetime", required: false }
+              - { label: "Tags", name: "tags", widget: "list", required: false }

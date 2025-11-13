@@ -32,6 +32,15 @@ collections:
               - { label: "Date", name: "date", widget: "datetime" }
               - { label: "Excerpt", name: "excerpt", widget: "text", required: false }
               - { label: "Cover", name: "cover", widget: "image", required: false }
+              - label: "Kategori"         # ⬅⬅⬅ TAMBAHKAN INI
+                name: "cat"
+                widget: "select"
+                options:
+                  - { label: "Public Speaking", value: "public-speaking" }
+                  - { label: "Self-Confidence", value: "self-confidence" }
+                  - { label: "Parenting", value: "parenting" }
+                  - { label: "Motivation", value: "motivation"}
+                  - { label: "Career", value: "career" }
               - { label: "Content", name: "content", widget: "text" }
 
   - label: "Publications"
